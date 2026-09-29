@@ -1,3 +1,5 @@
+from scapy.all import get_if_list
+
 def hello_world() -> str:
     """
     Hello world function
@@ -13,5 +15,18 @@ def choose_interface() -> str:
 
     :return: network interface
     """
-    interface = ""
-    return interface
+    list_interfaces = get_if_list()
+    for n, inter in enumerate(list_interfaces):
+        print(f"{n}. {inter}")
+    while True:
+        try:
+            choice: int = int(input("choose interface: "))
+            if choice < 0:
+                raise IndexError
+            interface = list_interfaces[choice]
+        except ValueError:
+            print("choose interface must be an integer")
+        except IndexError:
+            print("integer out of range")
+        else:
+            return interface
