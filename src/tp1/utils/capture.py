@@ -1,11 +1,12 @@
 from src.tp1.utils.lib import choose_interface
 from tp1.utils.config import logger
-
+from scapy.all import *
 
 class Capture:
     def __init__(self) -> None:
         self.interface = choose_interface()
         self.summary = ""
+        self.packets = []
 
     def capture_traffic(self) -> None:
         """
@@ -13,6 +14,8 @@ class Capture:
         """
         interface = self.interface
         logger.info(f"Capture traffic from interface {interface}")
+        self.packets = sniff(iface=interface, timeout=2)
+        logger.info(f"{len(self.packets)} packets captured")
 
     def sort_network_protocols(self) -> str:
         """
@@ -24,6 +27,19 @@ class Capture:
         """
         Return all protocols captured with total packets number
         """
+        compteur = {}
+        for packet in self.packets:
+            noms = []
+            for layer in packet.layers():
+                if layer.__name__ != "Raw" and layer.__name__ != "Padding":
+                    noms.append(layer.__name__)
+            proto = noms[-1]
+            if proto in compteur:
+                compteur[proto] += 1
+            else:
+                compteur[proto] = 1
+        print(compteur)
+
         return ""
 
     def analyse(self, protocols: str) -> None:

@@ -21,7 +21,7 @@ def choose_interface() -> str:
     while True:
         try:
             choice: int = int(input("choose interface: "))
-            if choice < 0:
+            if choice < 0 or choice > len(list_interfaces):
                 raise IndexError
             interface = list_interfaces[choice]
         except ValueError:
