@@ -39,7 +39,7 @@ class Capture:
             else:
                 compteur[proto] = 1
         print(compteur)
-
+        # GALERE
         return ""
 
     def analyse(self, protocols: str) -> None:
