@@ -18,16 +18,16 @@ def choose_interface() -> str:
     """
     list_interfaces = get_if_list()
     for n, inter in enumerate(list_interfaces):
-        print(f"{n}. {inter}")
+        logger.info(f"{n}. {inter}")
     while True:
         try:
             choice: int = int(input("choose interface: "))
-            if choice < 0 or choice > len(list_interfaces):
+            if choice < 0 or choice >= len(list_interfaces):
                 raise IndexError
             interface = list_interfaces[choice]
         except ValueError:
-            logger.info("choose interface must be an integer")
+            logger.warning("choose interface must be an integer")
         except IndexError:
-            logger.info("integer out of range")
+            logger.warning("integer out of range")
         else:
             return interface
