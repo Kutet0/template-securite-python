@@ -14,7 +14,7 @@ class Capture:
         """
         interface = self.interface
         logger.info(f"Capture traffic from interface {interface}")
-        self.packets = sniff(iface=interface, timeout=2)
+        self.packets = sniff(iface=interface, timeout=20)
         logger.info(f"{len(self.packets)} packets captured")
 
     def sort_network_protocols(self) -> str:
@@ -23,7 +23,7 @@ class Capture:
         """
         return ""
 
-    def get_all_protocols(self) -> str:
+    def get_all_protocols(self) -> dict:
         """
         Return all protocols captured with total packets number
         """
@@ -34,13 +34,15 @@ class Capture:
                 if layer.__name__ != "Raw" and layer.__name__ != "Padding":
                     noms.append(layer.__name__)
             proto = noms[-1]
+
+            if proto.startswith("ICMPv6"):
+                proto = "ICMPv6"
+
             if proto in compteur:
                 compteur[proto] += 1
             else:
                 compteur[proto] = 1
-        print(compteur)
-        # GALERE
-        return ""
+        return compteur
 
     def analyse(self, protocols: str) -> None:
         """

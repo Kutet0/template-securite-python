@@ -1,4 +1,5 @@
 from scapy.all import get_if_list
+from tp1.utils.config import logger
 
 def hello_world() -> str:
     """
@@ -25,8 +26,8 @@ def choose_interface() -> str:
                 raise IndexError
             interface = list_interfaces[choice]
         except ValueError:
-            print("choose interface must be an integer")
+            logger.info("choose interface must be an integer")
         except IndexError:
-            print("integer out of range")
+            logger.info("integer out of range")
         else:
             return interface
