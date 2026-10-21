@@ -3,8 +3,9 @@ from tp1.utils.config import logger
 from scapy.all import *
 
 class Capture:
-    def __init__(self) -> None:
-        self.interface = choose_interface()
+    def __init__(self, pcap: str | None = None, iface: str | None = None) -> None:
+        self.pcap = pcap
+        self.iface = iface
         self.summary = ""
         self.packets = []
 
@@ -12,9 +13,16 @@ class Capture:
         """
         Capture network traffic from an interface
         """
-        interface = self.interface
-        logger.info(f"Capture traffic from interface {interface}")
-        self.packets = sniff(iface=interface, timeout=20)
+        if self.pcap is not None:
+            logger.info(f"Capture traffic from {self.pcap}")
+            self.packets = rdpcap(self.pcap)
+        elif self.iface is not None:
+            logger.info(f"Capture traffic from {self.iface}")
+            self.packets = sniff(iface=self.iface, timeout=20)
+        else:
+            interface = choose_interface()
+            logger.info(f"Capture traffic from interface {interface}")
+            self.packets = sniff(iface=interface, timeout=20)
         logger.info(f"{len(self.packets)} packets captured")
 
     def sort_network_protocols(self) -> str:
