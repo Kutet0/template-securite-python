@@ -41,15 +41,17 @@ class Capture:
             for layer in packet.layers():
                 if layer.__name__ != "Raw" and layer.__name__ != "Padding":
                     noms.append(layer.__name__)
-            proto = noms[-1]
 
-            if proto.startswith("ICMPv6"):
-                proto = "ICMPv6"
+            for nom in noms:
+                if nom.startswith("ICMPv6"):
+                    nom = "ICMPv6"
+                if nom == "Ether":
+                    nom = "Ethernet"
 
-            if proto in compteur:
-                compteur[proto] += 1
-            else:
-                compteur[proto] = 1
+                if nom in compteur:
+                    compteur[nom] += 1
+                else:
+                    compteur[nom] = 1
         return compteur
 
     def analyse(self, protocols: str) -> None:
