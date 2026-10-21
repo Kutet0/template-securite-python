@@ -1,0 +1,10 @@
+{
+  "protocols": {
+    "ICMP": 16,
+    "TCP": 95,
+    "DNS": 12,
+    "ARP": 20
+  },
+  "attacks": [],
+  "flag": ""
+}

@@ -1,5 +1,5 @@
 from tp1.utils.capture import Capture
-
+import json
 
 class Report:
     def __init__(self, capture: Capture, filename: str, summary: str):
@@ -44,3 +44,11 @@ class Report:
             # TODO: generate array
             array = ""
             self.array = array
+
+    def save_json(self, path: str) -> None:
+        protocols = self.capture.get_all_protocols()
+        attacks = []
+        flag = ""
+        data = {"protocols": protocols, "attacks": attacks, "flag": flag}
+        with open(path, "w") as report:
+            json.dump(data, report, indent=2)

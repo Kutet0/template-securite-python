@@ -3,8 +3,9 @@ from tp1.utils.config import logger
 from scapy.all import *
 
 class Capture:
-    def __init__(self) -> None:
-        self.interface = choose_interface()
+    def __init__(self, pcap: str | None = None, iface: str | None = None) -> None:
+        self.pcap = pcap
+        self.iface = iface
         self.summary = ""
         self.packets = []
 
@@ -12,9 +13,16 @@ class Capture:
         """
         Capture network traffic from an interface
         """
-        interface = self.interface
-        logger.info(f"Capture traffic from interface {interface}")
-        self.packets = sniff(iface=interface, timeout=2)
+        if self.pcap is not None:
+            logger.info(f"Capture traffic from {self.pcap}")
+            self.packets = rdpcap(self.pcap)
+        elif self.iface is not None:
+            logger.info(f"Capture traffic from {self.iface}")
+            self.packets = sniff(iface=self.iface, timeout=20)
+        else:
+            interface = choose_interface()
+            logger.info(f"Capture traffic from interface {interface}")
+            self.packets = sniff(iface=interface, timeout=20)
         logger.info(f"{len(self.packets)} packets captured")
 
     def sort_network_protocols(self) -> str:
@@ -23,7 +31,7 @@ class Capture:
         """
         return ""
 
-    def get_all_protocols(self) -> str:
+    def get_all_protocols(self) -> dict:
         """
         Return all protocols captured with total packets number
         """
@@ -33,14 +41,18 @@ class Capture:
             for layer in packet.layers():
                 if layer.__name__ != "Raw" and layer.__name__ != "Padding":
                     noms.append(layer.__name__)
-            proto = noms[-1]
-            if proto in compteur:
-                compteur[proto] += 1
-            else:
-                compteur[proto] = 1
-        print(compteur)
 
-        return ""
+            for nom in noms:
+                if nom.startswith("ICMPv6"):
+                    nom = "ICMPv6"
+                if nom == "Ether":
+                    nom = "Ethernet"
+
+                if nom in compteur:
+                    compteur[nom] += 1
+                else:
+                    compteur[nom] = 1
+        return compteur
 
     def analyse(self, protocols: str) -> None:
         """
