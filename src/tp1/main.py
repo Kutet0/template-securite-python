@@ -26,6 +26,7 @@ def main():
     report.generate("array")
     report.save(filename)
 
+    report.save_json(args.out)
 
 if __name__ == "__main__":
     main()
