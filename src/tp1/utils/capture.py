@@ -1,6 +1,7 @@
 from src.tp1.utils.lib import choose_interface
 from tp1.utils.config import logger
-from scapy.all import *
+from scapy.all import rdpcap, sniff
+from scapy.layers.http import HTTP
 
 class Capture:
     def __init__(self, pcap: str | None = None, iface: str | None = None) -> None:
