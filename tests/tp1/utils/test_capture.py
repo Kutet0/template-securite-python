@@ -7,21 +7,10 @@ def test_capture_init():
     capture = Capture()
 
     # Then
-    assert capture.interface == ""
+    assert capture.pcap is None
+    assert capture.iface is None
     assert capture.summary == ""
-
-
-def test_given_capture_when_capture_traffic_then_interface_is_set():
-    # Given
-    capture = Capture()
-
-    # When
-    capture.capture_traffic()
-
-    # Then
-    # This is a minimal test since the method doesn't do much yet
-    assert capture.interface == ""
-
+    assert capture.packets == []
 
 def test_sort_network_protocols():
     # Given
@@ -42,7 +31,7 @@ def test_get_all_protocols():
     result = capture.get_all_protocols()
 
     # Then
-    assert result == ""  # Method currently returns None
+    assert result == {}  # Method currently returns None
 
 
 def test_analyse():
