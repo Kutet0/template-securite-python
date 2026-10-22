@@ -1,29 +1,34 @@
-# Template code Sécurité Python
+# TP1 — IDS/IPS maison
 
-## Description
-
-Projet contenant les modèles de TP pour le cours de sécurité Python de 4e année de l'ESGI.
+Outil d'analyse réseau en Python avec Scapy. Il lit une capture
+réseau (PCAP ou interface live), compte les paquets par protocole,
+détecte des attaques et produit un report.json.
 
 ## Installation
 
-Faire un fork puis un clone du projet :
-
-```bash
-git clone git@github.com:<VotreNom>/template-securite-python.git
-```
-
-Installer les dépendances :
-
-```bash
-cd template-securite-python
-poetry lock
+\`\`\`bash
 poetry install
-```
+\`\`\`
 
 ## Utilisation
 
-Lancer le projet :
+\`\`\`bash
+poetry run tp1 --pcap capture.pcap --out report.json
+\`\`\`
 
-```bash
-poetry run tp1
-```
+Options :
+- `--pcap` : fichier PCAP à analyser
+- `--iface` : interface réseau à sniffer (développement)
+- `--out` : chemin du report.json (défaut : report.json)
+
+## Détections
+
+- Comptage des protocoles (Ethernet, IP, TCP, UDP, ICMP, DNS, ARP, HTTP)
+- ARP spoofing (une IP annoncée par plusieurs MAC)
+- Scan de ports (nombreux SYN vers des ports différents)
+- Injection SQL (motifs suspects dans les requêtes HTTP)
+- Extraction du flag
+
+## Structure
+
+Le code vit dans `src/tp1/`, point d'entrée `src/tp1/main.py`.
