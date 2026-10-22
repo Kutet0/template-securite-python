@@ -158,3 +158,13 @@ class Capture:
                         attacks.append({"type": "sql_injection", "attacker": packet[IP].src})
                         break
         return attacks
+
+    def find_flag(self) -> str:
+        for packet in self.packets:
+            if packet.haslayer(HTTPRequest):
+                path = packet[HTTPRequest].Path.decode(errors="replace")
+                debut = path.find("ESGI{")
+                if debut != -1:
+                    fin = path.find("}", debut)
+                    return path[debut:fin+1]
+        return ""
