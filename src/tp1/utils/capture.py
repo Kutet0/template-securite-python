@@ -1,6 +1,7 @@
 from src.tp1.utils.lib import choose_interface
 from tp1.utils.config import logger
-from scapy.all import *
+from scapy.all import sniff, rdpcap
+from scapy.layers.http import HTTP
 
 class Capture:
     def __init__(self, pcap: str | None = None, iface: str | None = None) -> None:
@@ -36,6 +37,7 @@ class Capture:
         Return all protocols captured with total packets number
         """
         compteur = {}
+        A_IGNORER = {"Raw", "Padding", "HTTPRequest", "HTTPResponse"}
         for packet in self.packets:
             noms = []
             for layer in packet.layers():
@@ -43,6 +45,8 @@ class Capture:
                     noms.append(layer.__name__)
 
             for nom in noms:
+                if nom in A_IGNORER:
+                    continue
                 if nom.startswith("ICMPv6"):
                     nom = "ICMPv6"
                 if nom == "Ether":
