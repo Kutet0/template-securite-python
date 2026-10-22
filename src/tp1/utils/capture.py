@@ -1,10 +1,13 @@
+from urllib.parse import unquote
+
 from scapy.layers.inet import TCP, IP
 from scapy.layers.l2 import ARP
 
 from src.tp1.utils.lib import choose_interface
 from tp1.utils.config import logger
 from scapy.all import sniff, rdpcap
-from scapy.layers.http import HTTP
+from scapy.layers.http import HTTP, HTTPRequest
+
 
 class Capture:
     def __init__(self, pcap: str | None = None, iface: str | None = None) -> None:
@@ -140,4 +143,18 @@ class Capture:
         for ip, ports in ports_par_ip.items():
             if len(ports) > SEUIL:
                 attacks.append({"type": "port_scan", "attacker": ip})
+        return attacks
+
+    def detect_sql_injection(self) -> list:
+        attacks = []
+        motifs = ["' or 1=1", "union select", "' or '1'='1", "or 1=1"]
+        for packet in self.packets:
+            if packet.haslayer(HTTPRequest):
+                path = packet[HTTPRequest].Path.decode(errors="replace")
+                path = unquote(path)
+                path = path.lower()
+                for motif in motifs:
+                    if motif in path:
+                        attacks.append({"type": "sql_injection", "attacker": packet[IP].src})
+                        break
         return attacks
