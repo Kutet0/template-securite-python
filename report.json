@@ -13,6 +13,10 @@
     {
       "type": "arp_spoofing",
       "attacker": "02:49:0e:b6:2f:ec"
+    },
+    {
+      "type": "port_scan",
+      "attacker": "192.168.86.66"
     }
   ],
   "flag": ""

@@ -1,3 +1,4 @@
+from scapy.layers.inet import TCP, IP
 from scapy.layers.l2 import ARP
 
 from src.tp1.utils.lib import choose_interface
@@ -43,12 +44,10 @@ class Capture:
         for packet in self.packets:
             noms = []
             for layer in packet.layers():
-                if layer.__name__ != "Raw" and layer.__name__ != "Padding":
+                if layer.__name__ not in A_IGNORER:
                     noms.append(layer.__name__)
 
             for nom in noms:
-                if nom in A_IGNORER:
-                    continue
                 if nom.startswith("ICMPv6"):
                     nom = "ICMPv6"
                 if nom == "Ether":
@@ -78,6 +77,7 @@ class Capture:
         logger.debug(f"Sorted protocols: {sort}")
 
         self.detect_arp_spoofing()
+        self.detect_port_scan()
         self.summary = self._gen_summary()
 
     def get_summary(self) -> str:
@@ -124,4 +124,20 @@ class Capture:
                 if attacker is not None:
                     attacks.append({"type": "arp_spoofing", "attacker": attacker})
                     logger.info(f"{ip} -> {attacker}")
+        return attacks
+
+    def detect_port_scan(self) -> list:
+        ports_par_ip = {}
+        for packet in self.packets:
+            if packet.haslayer(TCP) and packet[TCP].flags == "S":
+                ip = packet[IP].src
+                port = packet[TCP].dport
+                if ip not in ports_par_ip:
+                    ports_par_ip[ip] = set()
+                ports_par_ip[ip].add(port)
+        SEUIL = 20
+        attacks = []
+        for ip, ports in ports_par_ip.items():
+            if len(ports) > SEUIL:
+                attacks.append({"type": "port_scan", "attacker": ip})
         return attacks
