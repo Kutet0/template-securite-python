@@ -1,7 +1,9 @@
 from unittest.mock import patch
 from src.tp1.utils.capture import Capture
+from src.tp1.utils.report import Report
 from scapy.all import Ether, IP, TCP, ARP
 from scapy.layers.http import HTTPRequest
+import json
 
 def test_capture_init():
     # When
@@ -136,3 +138,29 @@ def test_find_flag():
     result = capture.find_flag()
     # Then
     assert result == "ESGI{test123}"
+
+def test_save_json(tmp_path):
+    # Given
+    capture = Capture()
+    capture.packets = [Ether() / IP() / TCP()]
+    report = Report(capture, "report.pdf", "")
+    chemin = tmp_path / "report.json"
+    # When
+    report.save_json(str(chemin))
+    # Then
+    data = json.loads(chemin.read_text())
+    assert "protocols" in data
+    assert "attacks" in data
+    assert "flag" in data
+
+def test_concat_report():
+    # Given
+    capture = Capture()
+    report = Report(capture, "report.pdf", "mon résumé")
+    report.title = "Titre"
+    report.array = "tableau"
+    report.graph = "graphe"
+    # When
+    result = report.concat_report()
+    # Then
+    assert result == "Titremon résumétableaugraphe"
