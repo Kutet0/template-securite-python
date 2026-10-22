@@ -1,3 +1,5 @@
+from scapy.layers.l2 import ARP
+
 from src.tp1.utils.lib import choose_interface
 from tp1.utils.config import logger
 from scapy.all import sniff, rdpcap
@@ -75,6 +77,7 @@ class Capture:
         logger.debug(f"All protocols: {all_protocols}")
         logger.debug(f"Sorted protocols: {sort}")
 
+        self.detect_arp_spoofing()
         self.summary = self._gen_summary()
 
     def get_summary(self) -> str:
@@ -90,3 +93,35 @@ class Capture:
         """
         summary = ""
         return summary
+
+    def detect_arp_spoofing(self) -> list:
+        ip_macs = {}
+        mac_count = {}
+        for packet in self.packets:
+            if packet.haslayer(ARP) and packet[ARP].op == 2:
+                ip = packet[ARP].psrc
+                mac = packet[ARP].hwsrc
+
+                if ip not in ip_macs:
+                    ip_macs[ip] = set()
+                ip_macs[ip].add(mac)
+
+                if mac not in mac_count:
+                    mac_count[mac] = 1
+                else:
+                    mac_count[mac] += 1
+        logger.debug(f"{ip_macs} / {mac_count}")
+
+        attacks = []
+        for ip, mac in ip_macs.items():
+            if len(mac) > 1:
+                attacker = None
+                best = -1
+                for m in mac:
+                    if mac_count[m] > best:
+                        best = mac_count[m]
+                        attacker = m
+                if attacker is not None:
+                    attacks.append({"type": "arp_spoofing", "attacker": attacker})
+                    logger.info(f"{ip} -> {attacker}")
+        return attacks

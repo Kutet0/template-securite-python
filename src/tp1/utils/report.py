@@ -47,7 +47,7 @@ class Report:
 
     def save_json(self, path: str) -> None:
         protocols = self.capture.get_all_protocols()
-        attacks = []
+        attacks = self.capture.detect_arp_spoofing()
         flag = ""
         data = {"protocols": protocols, "attacks": attacks, "flag": flag}
         with open(path, "w") as report:
