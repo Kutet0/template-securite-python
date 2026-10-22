@@ -1,24 +1,22 @@
 # TP1 — IDS/IPS maison
 
-Outil d'analyse réseau en Python avec Scapy. Il lit une capture
-réseau (PCAP ou interface live), compte les paquets par protocole,
-détecte des attaques et produit un report.json.
+Outil d'analyse réseau en Python avec Scapy il lit une capture réseau (PCAP ou interface live), compte les paquets par protocole, détecte des attaques et produit un report.json.
 
 ## Installation
 
-\`\`\`bash
+```bash
 poetry install
-\`\`\`
+```
 
 ## Utilisation
 
-\`\`\`bash
+```bash
 poetry run tp1 --pcap capture.pcap --out report.json
-\`\`\`
+```
 
 Options :
 - `--pcap` : fichier PCAP à analyser
-- `--iface` : interface réseau à sniffer (développement)
+- `--iface` : interface réseau à sniffer
 - `--out` : chemin du report.json (défaut : report.json)
 
 ## Détections
