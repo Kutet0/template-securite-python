@@ -22,6 +22,7 @@ def main():
         if not os.path.isfile(path):
             continue
         report = Report(path)
+        report.analyze()
         report.save_json(args.out)
         logger.info(f"rapport écrit pour {name}")
 

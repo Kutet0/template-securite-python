@@ -1,6 +1,9 @@
 import json
 import os
 
+from tp2.utils.config import logger
+from tp2.utils.metadata import get_file_metadata
+
 
 class Report:
     def __init__(self, sample_path):
@@ -27,9 +30,14 @@ class Report:
             "flag": "",
         }
 
+    def analyze(self):
+        with open(self.sample_path, "rb") as f:
+            data = f.read()
+            self.data.update(get_file_metadata(data))
+            logger.info(f"Analyse de : {self.sample_path}")
+
     def save_json(self, out_dir) -> None:
         os.makedirs(out_dir, exist_ok=True)
-        name = os.path.basename(self.sample_path)
-        path = os.path.join(out_dir, f"{name}.json")
+        path = os.path.join(out_dir, f"{self.data['sha256']}.json")
         with open(path, "w") as f:
             json.dump(self.data, f, indent=2)
