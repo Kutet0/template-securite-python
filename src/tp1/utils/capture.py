@@ -6,7 +6,7 @@ from scapy.layers.l2 import ARP
 from src.tp1.utils.lib import choose_interface
 from tp1.utils.config import logger
 from scapy.all import sniff, rdpcap
-from scapy.layers.http import HTTP, HTTPRequest
+from scapy.layers.http import HTTPRequest
 
 
 class Capture:
@@ -166,5 +166,5 @@ class Capture:
                 debut = path.find("ESGI{")
                 if debut != -1:
                     fin = path.find("}", debut)
-                    return path[debut:fin+1]
+                    return path[debut : fin + 1]
         return ""

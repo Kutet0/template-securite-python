@@ -5,6 +5,7 @@ from scapy.all import Ether, IP, TCP, ARP
 from scapy.layers.http import HTTPRequest
 import json
 
+
 def test_capture_init():
     # When
     capture = Capture()
@@ -14,6 +15,7 @@ def test_capture_init():
     assert capture.iface is None
     assert capture.summary == ""
     assert capture.packets == []
+
 
 def test_sort_network_protocols():
     # Given
@@ -79,21 +81,19 @@ def test_gen_summary():
     # Then
     assert result == ""  # Method currently returns empty string
 
+
 def test_get_all_protocols_compte_les_couches():
-    #Given
+    # Given
     capture = Capture()
-    capture.packets = [
-        Ether() / IP() / TCP(),
-        Ether() / IP() / TCP(),
-        Ether() / ARP()
-    ]
-    #when
+    capture.packets = [Ether() / IP() / TCP(), Ether() / IP() / TCP(), Ether() / ARP()]
+    # when
     result = capture.get_all_protocols()
-    #then
+    # then
     assert result["TCP"] == 2
     assert result["IP"] == 2
     assert result["ARP"] == 1
     assert result["Ethernet"] == 3
+
 
 def test_detect_arp_spoofing():
     # Given
@@ -108,36 +108,36 @@ def test_detect_arp_spoofing():
     # Then
     assert result == [{"type": "arp_spoofing", "attacker": "aa:aa:aa:aa:aa:aa"}]
 
+
 def test_detect_port_scan():
-    #Given
+    # Given
     capture = Capture()
     capture.packets = [IP(src="10.0.0.5") / TCP(dport=p, flags="S") for p in range(30)]
-    #When
+    # When
     result = capture.detect_port_scan()
-    #Then
+    # Then
     assert result == [{"type": "port_scan", "attacker": "10.0.0.5"}]
+
 
 def test_detect_sql_injection():
     # Given
     capture = Capture()
-    capture.packets = [
-        IP(src="10.0.0.9") / TCP() / HTTPRequest(Path=b"/login?user=admin' or 1=1--")
-    ]
+    capture.packets = [IP(src="10.0.0.9") / TCP() / HTTPRequest(Path=b"/login?user=admin' or 1=1--")]
     # When
     result = capture.detect_sql_injection()
     # Then
     assert result == [{"type": "sql_injection", "attacker": "10.0.0.9"}]
 
+
 def test_find_flag():
     # Given
     capture = Capture()
-    capture.packets = [
-        IP() / TCP() / HTTPRequest(Path=b"/page?token=ESGI{test123}")
-    ]
+    capture.packets = [IP() / TCP() / HTTPRequest(Path=b"/page?token=ESGI{test123}")]
     # When
     result = capture.find_flag()
     # Then
     assert result == "ESGI{test123}"
+
 
 def test_save_json(tmp_path):
     # Given
@@ -152,6 +152,7 @@ def test_save_json(tmp_path):
     assert "protocols" in data
     assert "attacks" in data
     assert "flag" in data
+
 
 def test_concat_report():
     # Given

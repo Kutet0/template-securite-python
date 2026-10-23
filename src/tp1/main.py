@@ -3,6 +3,7 @@ from tp1.utils.config import logger
 from tp1.utils.report import Report
 import argparse
 
+
 def main():
     logger.info("Starting TP1")
 
@@ -27,6 +28,7 @@ def main():
     report.save(filename)
 
     report.save_json(args.out)
+
 
 if __name__ == "__main__":
     main()
