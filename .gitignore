@@ -10,3 +10,5 @@ report.pdf
 app.log
 .env
 .pytest_cache/
+samples_test/
+out/
