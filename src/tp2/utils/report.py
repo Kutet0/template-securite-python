@@ -38,6 +38,10 @@ class Report:
 
     def save_json(self, out_dir) -> None:
         os.makedirs(out_dir, exist_ok=True)
-        path = os.path.join(out_dir, f"{self.data['sha256']}.json")
+        name = os.path.basename(self.sample_path)
+        self._write_json(os.path.join(out_dir, f"{self.data['sha256']}.json"))
+        self._write_json(os.path.join(out_dir, f"{name}.triage.json"))
+
+    def _write_json(self, path: str) -> None:
         with open(path, "w") as f:
             json.dump(self.data, f, indent=2)

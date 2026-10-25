@@ -12,3 +12,4 @@ app.log
 .pytest_cache/
 samples_test/
 out/
+pack/
