@@ -6,7 +6,7 @@ lief.logging.disable()
 
 REGEX_URL = re.compile(r"https?://[^\s\"'<>]+")
 REGEX_IP = re.compile(r"\b(?:\d{1,3}\.){3}\d{1,3}\b")
-REGEX_DOMAIN = re.compile(r"\b(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}\b")
+REGEX_DOMAIN = re.compile(r"\b(?:[a-zA-Z0-9-]+\.)+[a-z]{2,}\b")
 REGEX_MUTEX = re.compile(r"(?:Global|Local)\\[^\s\"']+")
 REGEX_REGISTRY = re.compile(r"\b(?:HKLM|HKCU|HKEY_[A-Z_]+)\\[^\s\"']+")
 REGEX_FLAG = re.compile(r"FLAG=(ESGI\{[^}]+\})")
@@ -53,8 +53,13 @@ def extract_iocs(data: bytes) -> dict:
     }
 
 
-def find_flags(data: bytes) -> list[str]:
-    pass
+def find_flag(data: bytes) -> list[str]:
+    text = "\n".join(extract_strings(data))
+    trouvés = REGEX_FLAG.findall(text)
+    if trouvés:
+        return trouvés[0]
+    else:
+        return ""
 
 
 def is_valid_ip(ip: str) -> bool:
