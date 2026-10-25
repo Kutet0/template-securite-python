@@ -3,6 +3,7 @@ import os
 
 from tp2.utils.config import logger
 from tp2.utils.report import Report
+from tp2.utils.yara_scan import load_rules
 
 
 def main():
@@ -17,12 +18,13 @@ def main():
 
     logger.info(f"les arguments : {args}")
 
+    rules = load_rules(args.rules)
     for name in os.listdir(args.samples):
         path = os.path.join(args.samples, name)
         if not os.path.isfile(path):
             continue
         report = Report(path)
-        report.analyze()
+        report.analyze(rules)
         report.save_json(args.out)
         logger.info(f"rapport écrit pour {name}")
 

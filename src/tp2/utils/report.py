@@ -1,6 +1,7 @@
 import json
 import os
 
+from tp2.utils.yara_scan import yara_scan
 from tp2.utils.config import logger
 from tp2.utils.metadata import get_file_metadata
 from tp2.utils.iocs import get_payload, extract_iocs, find_flag
@@ -31,13 +32,14 @@ class Report:
             "flag": "",
         }
 
-    def analyze(self):
+    def analyze(self, rules: list):
         with open(self.sample_path, "rb") as f:
             data = f.read()
             self.data.update(get_file_metadata(data))
             payload = get_payload(self.sample_path, data)
             self.data["iocs"] = extract_iocs(payload)
             self.data["flag"] = find_flag(payload)
+            self.data["yara_matches"] = yara_scan(data, rules)
             logger.info(f"Analyse de : {self.sample_path}")
 
     def save_json(self, out_dir) -> None:

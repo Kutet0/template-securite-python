@@ -13,3 +13,4 @@ app.log
 samples_test/
 out/
 pack/
+rules_test/
