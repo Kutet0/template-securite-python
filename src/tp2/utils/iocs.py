@@ -1,4 +1,7 @@
 import re
+import lief
+
+lief.logging.disable()
 
 
 def extract_strings(data: bytes) -> list[str]:
@@ -12,3 +15,10 @@ def extract_strings(data: bytes) -> list[str]:
     large = re.findall(rb"(?:[\x20-\x7e]\x00){4,}", data)
     large_string = [s.decode("utf-16-le") for s in large]
     return ascii_string + large_string
+
+
+def get_payload(path: str, data: bytes) -> bytes:
+    binary = lief.parse(path)
+    if binary is not None and binary.has_overlay:
+        return bytes(binary.overlay)
+    return data
