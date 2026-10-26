@@ -1,3 +1,5 @@
+import argparse
+
 from src.tp3.utils.config import logger
 from src.tp3.utils.session import Session
 
@@ -5,7 +7,13 @@ from src.tp3.utils.session import Session
 def main():
     logger.info("Starting TP3")
 
-    ip = "31.220.95.27:9002"
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--target", type=str, required=True, help="Target URL")
+    args = parser.parse_args()
+
+    logger.info(f"Target : {args.target}")
+
+    ip = args.target
     challenges = {"1": f"http://{ip}/captcha1/", "2": f"http://{ip}/captcha2/"}
 
     for i in challenges:
